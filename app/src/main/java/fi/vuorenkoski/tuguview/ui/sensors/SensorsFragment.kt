@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +21,6 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.collections.forEach
-
 
 class SensorsFragment : Fragment() {
 
@@ -40,28 +38,27 @@ class SensorsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val sensorsViewModel =
-            ViewModelProvider(this).get(SensorsViewModel::class.java)
-
         _binding = FragmentSensorsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        // 2. Retrieve the saved values using the keys from your root_preferences.xml
-        //    Provide a default value (e.g., an empty string) in case nothing is saved yet.
+        Log.i("MainActivity", "getting credentials")
         val backend = sharedPreferences.getString("backend_text", "") ?: ""
         val username = sharedPreferences.getString("name_text", "") ?: ""
         val password = sharedPreferences.getString("password_text", "") ?: ""
 
-        // --- END OF CHANGES ---
-
         // Check if settings are configured before trying to fetch data
         if (backend.isBlank() || username.isBlank()) {
-            Snackbar.make(binding.root, "Backend or Username not set in settings", Snackbar.LENGTH_LONG).show()
+            Log.i("MainActivity", "getting credentials blank?")
+//            Snackbar.make(binding.root, "Backend or Username not set in settings", Snackbar.LENGTH_LONG).show()
             // Don't proceed to fetch data if settings are missing
+            Log.i("MainActivity", "credentials not found")
             return root
         }
+        Log.i("MainActivity", "credentials OK")
+
+
         val recyclerView: RecyclerView = binding.sensorList // Or use binding.sensorList if defined in XML
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 

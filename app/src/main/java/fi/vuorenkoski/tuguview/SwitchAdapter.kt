@@ -1,18 +1,27 @@
 package fi.vuorenkoski.tuguview
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat // If you format dates here
 import java.util.Locale // If you format dates here
-
+import com.google.android.material.switchmaterial.SwitchMaterial
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.lifecycle.lifecycleScope
 
 class SwitchAdapter(
     private val context: Context, // Changed to non-null
-    private var mData: MutableList<Switch> // Changed to MutableList for easier updates
+    private var mData: MutableList<Switch>, // Changed to MutableList for easier updates
+    private var onSwitchToggled: (switchId: String, isChecked: Boolean) -> Unit
 ) : RecyclerView.Adapter<SwitchAdapter.ViewHolder>() { // ViewHolder non-null
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
@@ -34,15 +43,9 @@ class SwitchAdapter(
     ) {
         val switch = mData[position] // Use Kotlin index access
 
-        // It's good practice to handle potential nulls from your data source
         holder.switchNameView.text = switch.description ?: "N/A"
 
-        // Example: If sensor.date is a java.util.Date and needs formatting
-        // val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
-        // holder.sensorDateView.text = sensor.date?.let { dateFormat.format(it) } ?: "No Date"
-        // If sensor.date is already a formatted String:
         val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
-
         holder.switchDateView.text = switch.date?.let { dateValue ->
             // Ensure 'dateValue' is indeed a Date if sensor.date's type is more general like Any?
             if (dateValue is java.util.Date) {
@@ -53,6 +56,19 @@ class SwitchAdapter(
         } ?: "No Date"
 
         holder.switchValueView.text = switch.on
+
+        Log.e("MainActivity", "switch ")
+
+        val isOn = switch.on.equals("ON", ignoreCase = true)
+        // Temporarily disable the listener to prevent it from firing when we set the initial state
+        holder.switchToggle.setOnCheckedChangeListener(null)
+        holder.switchToggle.isChecked = isOn
+
+        // 2. Re-attach the listener to handle user interaction
+        holder.switchToggle.setOnCheckedChangeListener { _, isChecked ->
+            // 3. Call the lambda function passed from the Fragment
+            onSwitchToggled(switch.id, isChecked)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -73,6 +89,7 @@ class SwitchAdapter(
         val switchNameView: TextView = itemView.findViewById(R.id.switch_name)
         val switchDateView: TextView = itemView.findViewById(R.id.switch_date)
         val switchValueView: TextView = itemView.findViewById(R.id.switch_value)
+        val switchToggle: SwitchMaterial = itemView.findViewById(R.id.switch_toggle)
 
         init {
             itemView.setOnClickListener(this)

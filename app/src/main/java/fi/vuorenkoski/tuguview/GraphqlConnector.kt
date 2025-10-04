@@ -112,28 +112,37 @@ class GraphQLConnector {
     // Change switch
     @Throws(Exception::class)
     fun setSwitch(switchId: String, command: Boolean) {
-        val query =
-            "mutation setSwitchCommand(\$command: Boolean!, \$setSwitchId: Int!) {setSwitchCommand(command: \$command, id: \$setSwitchId) {command}}"
-        val variables = "\"setSwitchId\":" + switchId + ", \"command\":" + command
-        val jsonRequest = "{\"query\":\"" + query + "\",\"variables\":{" + variables + "}}"
-        println("GraphQL Request: " + jsonRequest)
+        // Escaping the query string is safer
+        val query = "mutation setSwitchCommand(\$command: Boolean!, \$setSwitchId: Int!) { setSwitchCommand(command: \$command, id: \$setSwitchId) { id on } }"
+        val variables = "\"setSwitchId\":$switchId, \"command\":$command"
+        val jsonRequest = "{\"query\":\"${query.replace("\"", "\\\"")}\",\"variables\":{$variables}}"
+
+        Log.d("GraphQLConnector", "Request: $jsonRequest")
         val url = URL(graphqlEndpoint)
         val conn = url.openConnection() as HttpURLConnection
-        conn.setRequestMethod("POST")
+        conn.requestMethod = "POST"
         conn.setRequestProperty("Content-Type", "application/json")
         conn.setRequestProperty("Authorization", "Bearer " + token)
-        conn.setDoOutput(true)
-        conn.getOutputStream().use { os ->
+        conn.doOutput = true
+        conn.outputStream.use { os ->
             val input = jsonRequest.toByteArray(charset("utf-8"))
             os.write(input, 0, input.size)
         }
-        val responseCode = conn.getResponseCode()
-        val br: BufferedReader?
-        if (responseCode >= 200 && responseCode < 300) {
-            br = BufferedReader(InputStreamReader(conn.getInputStream(), "utf-8"))
+
+        val responseCode = conn.responseCode
+        // Read the response to complete the HTTP transaction, even if you don't use it.
+        val inputStream = if (responseCode in 200..299) {
+            conn.inputStream
         } else {
-            println("HTTP error code: " + responseCode)
-            br = BufferedReader(InputStreamReader(conn.getErrorStream(), "utf-8"))
+            conn.errorStream
+        }
+        val response = inputStream.bufferedReader().use { it.readText() }
+
+        Log.d("GraphQLConnector", "Response Code: $responseCode, Body: $response")
+
+        // If the server returns an error code, throw an exception
+        if (responseCode !in 200..299) {
+            throw Exception("Failed to set switch. Server responded with code $responseCode: $response")
         }
     }
 
