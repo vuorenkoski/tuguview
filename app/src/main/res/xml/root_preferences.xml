@@ -1,0 +1,26 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="Serverin tiedot">
+
+        <EditTextPreference
+            app:key="backend_text"
+            app:title="Backend osoite"
+            app:summary="Anna backend GraphQL URL"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="name_text"
+            app:title="Käyttäjätunnus"
+            app:summary="anna käyttäjätunnus"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="password_text"
+            app:title="Salasana"
+            app:summary="Anna salasana"
+            android:inputType="textPassword"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

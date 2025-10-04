@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">TuguView</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">TuguView v0.1</string>
+    <string name="nav_header_subtitle"></string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_sensors">Mittarit</string>
+    <string name="menu_switches">Kytkimet</string>
+    <string name="menu_settings">Asetukset</string>
+
+    <string name="loading_sensors">Loading sensors…</string>
+    <string name="no_sensors_found">No sensors found.</string>
+    <string name="no_settings_configured">Please configure backend settings.</string>
+</resources>
