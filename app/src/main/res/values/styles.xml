@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      CORRECTED: The parent is now "Widget.MaterialComponents.Button.TextButton.Dialog"
+    -->
+    <style name="App.Button.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <!--
+          For the MaterialComponents library, colorAccent is the correct attribute for this purpose.
+        -->
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
+    <!--
+      CORRECTED: The parent is now "ThemeOverlay.MaterialComponents.MaterialAlertDialog"
+    -->
+    <style name="App.AlertDialogThemeNight" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/App.Button.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/App.Button.Dialog</item>
+    </style>
+</resources>
