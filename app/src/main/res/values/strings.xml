@@ -2,10 +2,15 @@
     <string name="app_name">TuguView</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">TuguView v0.1</string>
+    <string name="nav_header_title">TuguView v0.2</string>
     <string name="nav_header_subtitle"></string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="about_header">About</string>
+    <string name="version_name">App version</string>
+    <string name="version_code">Version code</string>
+    <string name="version_buildtype">Build type</string>
+
 
     <string name="menu_sensors">Mittarit</string>
     <string name="menu_switches">Kytkimet</string>

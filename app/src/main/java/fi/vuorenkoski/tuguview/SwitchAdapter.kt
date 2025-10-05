@@ -47,12 +47,7 @@ class SwitchAdapter(
 
         val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
         holder.switchDateView.text = switch.date?.let { dateValue ->
-            // Ensure 'dateValue' is indeed a Date if sensor.date's type is more general like Any?
-            if (dateValue is java.util.Date) {
                 sdf.format(dateValue)
-            } else {
-                null // Or "Invalid Date Type" directly if you don't want "No Date"
-            }
         } ?: "No Date"
 
         holder.switchValueView.text = switch.on

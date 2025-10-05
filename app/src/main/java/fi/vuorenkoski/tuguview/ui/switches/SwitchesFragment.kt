@@ -63,29 +63,18 @@ class SwitchesFragment : Fragment() {
                     switchesViewModel.toggleSwitch(connector, switchId, isChecked)
 
                     // 2. After the update is done, re-fetch all switches to get the latest state.
-                    var notOk = true
+                    var ok = false
                     val expectedStatus = if (isChecked) "ON" else "OFF"
-                    while (notOk) {
+                    var round = 0
+                    while (!ok) {
                         delay(1000) // Wait for 2 seconds before checking
-                        val switches = fetchAndDisplaySwitches()
-
-                        // Find the switch we are interested in
-                        val toggledSwitch = switches.find { it.id == switchId }
-
-                        if (toggledSwitch != null) {
-                            // Check if the server status matches what we expect
-                            if (toggledSwitch.on.equals(expectedStatus, ignoreCase = true)) {
-                                Log.d("SwitchesFragment", "Switch status confirmed on server.")
-                                notOk = false // Exit the loop
-                            } else {
-                                Log.d("SwitchesFragment", "Waiting for switch status to update on server...")
-                            }
-                        } else {
-                            // If the switch is not found, something is wrong, exit the loop to avoid an infinite loop.
-                            Log.w("SwitchesFragment", "Toggled switch not found in fetch response, exiting poll loop.")
-                            notOk = false
+                        ok = fetchAndDisplaySwitches(switchId, expectedStatus)
+                        round++
+                        if (round > 7) {
+                            break
                         }
                     }
+                    fetchAndDisplaySwitches()
 
                 } catch (e: Exception) {
                     Log.e("MainActivity", "Error during switch toggle and refresh", e)
@@ -135,22 +124,28 @@ class SwitchesFragment : Fragment() {
     }
 
     // This function now fetches switches and updates the UI
-    private suspend fun fetchAndDisplaySwitches(): List<Switch> {
+    private suspend fun fetchAndDisplaySwitches(switchId: String? = null, expectedStatus: String? = null): Boolean {
         try {
             val switches: List<Switch> = withContext(Dispatchers.IO) {
                 connector.fetchSwitches()
             }
+            var switchStatus = true
+            if (switchId != null && expectedStatus != null) {
+                val toggledSwitch = switches.find { it.id == switchId }
+                switchStatus = toggledSwitch?.on == expectedStatus
+                toggledSwitch?.on = expectedStatus
+            }
             withContext(Dispatchers.Main) {
                 switchAdapter.updateData(switches)
             }
-            return switches
+            return switchStatus
         } catch (e: Exception) {
             Log.e("MainActivity", "Failed to refresh switches", e)
             // Use withContext(Dispatchers.Main) to safely show Snackbar from a suspend function
             withContext(Dispatchers.Main) {
                 Snackbar.make(binding.root, "Failed to refresh switches: ${e.message}", Snackbar.LENGTH_LONG).show()
             }
-            return emptyList() // Return an empty list on error
+            return true // Return an empty list on error
         }
     }
 

@@ -65,6 +65,7 @@
             android:id="@+id/switch_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:thumbTint="@color/switch_thumb_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

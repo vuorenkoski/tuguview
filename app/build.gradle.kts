@@ -12,7 +12,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -24,6 +24,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            resValue("bool", "is_production", "true")
+        }
+        debug {
+            // This will make your debug version name "0.2-debug"
+            versionNameSuffix = "-debug"
+            // Make 'is_production' false for debug builds
+            resValue("bool", "is_production", "false")
+            // You can also change the application ID for debug builds
+            // to install them side-by-side with the release version.
+            applicationIdSuffix = ".debug"
         }
     }
     compileOptions {
@@ -35,6 +45,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

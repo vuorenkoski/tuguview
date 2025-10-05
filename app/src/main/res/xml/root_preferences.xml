@@ -23,4 +23,23 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/about_header">
+
+        <Preference
+            app:key="version_name"
+            app:title="@string/version_name"
+            app:summary="Version will be shown here" />
+
+        <Preference
+            app:key="version_code"
+            app:title="@string/version_code"
+            app:summary="Version will be shown here" />
+
+        <Preference
+            app:key="version_buildtype"
+            app:title="@string/version_buildtype"
+            app:summary="Version will be shown here" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

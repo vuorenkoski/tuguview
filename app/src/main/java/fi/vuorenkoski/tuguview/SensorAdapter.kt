@@ -9,14 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat // If you format dates here
 import java.util.Locale // If you format dates here
 
-// Assuming your Sensor class looks something like this:
-// data class Sensor(
-//    val sensorFullname: String?,
-//    val date: Date?, // Or a String if already formatted
-//    val lastValue: Any?, // Or specific type like Double?, Int?
-//    val sensorUnit: String?
-// )
-
 class SensorAdapter(
     private val context: Context, // Changed to non-null
     private var mData: MutableList<Sensor> // Changed to MutableList for easier updates
@@ -41,22 +33,12 @@ class SensorAdapter(
     ) {
         val sensor = mData[position] // Use Kotlin index access
 
-        // It's good practice to handle potential nulls from your data source
         holder.sensorNameView.text = sensor.sensorFullname ?: "N/A"
 
-        // Example: If sensor.date is a java.util.Date and needs formatting
-        // val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
-        // holder.sensorDateView.text = sensor.date?.let { dateFormat.format(it) } ?: "No Date"
-        // If sensor.date is already a formatted String:
         val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
 
         holder.sensorDateView.text = sensor.date?.let { dateValue ->
-            // Ensure 'dateValue' is indeed a Date if sensor.date's type is more general like Any?
-            if (dateValue is java.util.Date) {
                 sdf.format(dateValue)
-            } else {
-                null // Or "Invalid Date Type" directly if you don't want "No Date"
-            }
         } ?: "No Date"
 
         var preSign = ""
