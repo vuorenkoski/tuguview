@@ -43,7 +43,6 @@ class SensorsFragment : Fragment() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        Log.i("MainActivity", "getting credentials")
         val backend = sharedPreferences.getString("backend_text", "") ?: ""
         val username = sharedPreferences.getString("name_text", "") ?: ""
         val password = sharedPreferences.getString("password_text", "") ?: ""
@@ -51,12 +50,9 @@ class SensorsFragment : Fragment() {
         // Check if settings are configured before trying to fetch data
         if (backend.isBlank() || username.isBlank()) {
             Log.i("MainActivity", "getting credentials blank?")
-//            Snackbar.make(binding.root, "Backend or Username not set in settings", Snackbar.LENGTH_LONG).show()
-            // Don't proceed to fetch data if settings are missing
-            Log.i("MainActivity", "credentials not found")
+            Snackbar.make(requireActivity().findViewById(android.R.id.content), "Backend or Username not set", Snackbar.LENGTH_LONG).show()
             return root
         }
-        Log.i("MainActivity", "credentials OK")
 
 
         val recyclerView: RecyclerView = binding.sensorList // Or use binding.sensorList if defined in XML

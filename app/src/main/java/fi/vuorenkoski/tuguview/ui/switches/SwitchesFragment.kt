@@ -27,7 +27,6 @@ class SwitchesFragment : Fragment() {
 
     private var _binding: FragmentSwitchesBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var switchAdapter: SwitchAdapter
     private lateinit var switchesViewModel: SwitchesViewModel
 
@@ -111,7 +110,8 @@ class SwitchesFragment : Fragment() {
         val password = sharedPreferences.getString("password_text", "") ?: ""
 
         if (backend.isBlank() || username.isBlank()) {
-            Snackbar.make(binding.root, "Backend or Username not set in settings", Snackbar.LENGTH_LONG).show()
+            Log.i("MainActivity", "getting credentials blank?")
+            Snackbar.make(requireActivity().findViewById(android.R.id.content), "Backend or Username not set", Snackbar.LENGTH_LONG).show()
             return
         }
 
