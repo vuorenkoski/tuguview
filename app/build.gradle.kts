@@ -25,6 +25,7 @@ android {
                 "proguard-rules.pro"
             )
             resValue("bool", "is_production", "true")
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             // This will make your debug version name "0.2-debug"

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "tw_kokeilu"
+rootProject.name = "Tuguview"
 include(":app")
  
