@@ -59,6 +59,7 @@ class SwitchesFragment : Fragment() {
             // It correctly returns Unit because it's part of the function call.
             lifecycleScope.launch {
                 try {
+                    binding.progressBar.visibility = View.VISIBLE
                     // 1. Call the suspend function to update the switch on the backend.
                     switchesViewModel.toggleSwitch(connector, switchId, isChecked)
 
@@ -79,6 +80,8 @@ class SwitchesFragment : Fragment() {
                 } catch (e: Exception) {
                     Log.e("MainActivity", "Error during switch toggle and refresh", e)
                     Snackbar.make(binding.root, "Failed to update switch", Snackbar.LENGTH_LONG).show()
+                } finally {
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         }
@@ -107,6 +110,7 @@ class SwitchesFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 // First, log in
+                binding.progressBar.visibility = View.VISIBLE
                 val loginSuccessful = withContext(Dispatchers.IO) {
                     connector.login(username, password, "https://$backend/api/graphql")
                     true // Assume login is successful if no exception is thrown
@@ -119,6 +123,8 @@ class SwitchesFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e("MainActivity", "Failed to login or get initial data", e)
                 Snackbar.make(binding.root, "Failed to get data: ${e.message}", Snackbar.LENGTH_LONG).show()
+            } finally {
+                binding.progressBar.visibility = View.GONE
             }
         }
     }

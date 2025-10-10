@@ -39,7 +39,30 @@ class SensorsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSensorsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fetchSensorData()
+    }
+
+    private fun setupRecyclerView() {
+        // Initialize with an empty list. The adapter will be updated later.
+        sensorAdapter = SensorAdapter(requireContext(), ArrayList())
+        binding.sensorList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = sensorAdapter
+            setHasFixedSize(true)
+        }
+    }
+
+    private fun fetchSensorData() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
@@ -50,21 +73,18 @@ class SensorsFragment : Fragment() {
         // Check if settings are configured before trying to fetch data
         if (backend.isBlank() || username.isBlank()) {
             Log.i("MainActivity", "getting credentials blank?")
-            Snackbar.make(requireActivity().findViewById(android.R.id.content), "Backend or Username not set", Snackbar.LENGTH_LONG).show()
-            return root
+            Snackbar.make(
+                requireActivity().findViewById(android.R.id.content),
+                "Backend or Username not set",
+                Snackbar.LENGTH_LONG
+            ).show()
+            return
         }
-
-
-        val recyclerView: RecyclerView = binding.sensorList // Or use binding.sensorList if defined in XML
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        recyclerView.setHasFixedSize(true)
-        sensorAdapter = SensorAdapter(requireContext(), sensorList)
-        recyclerView.adapter = sensorAdapter
 
         // Perform network operations on a background thread
         lifecycleScope.launch {
             try {
+                binding.progressBar.visibility = View.VISIBLE
                 val connector = GraphQLConnector()
                 val loginSuccessful = withContext(Dispatchers.IO) { // Switch to IO thread
                     connector.login(username, password, "https://$backend/api/graphql")
@@ -81,7 +101,10 @@ class SensorsFragment : Fragment() {
                         val sensorName = sensor.sensorFullname ?: "Unknown Sensor"
                         val sensorValue = sensor.lastValue ?: "N/A"
                         val sensorDate = sensor.date?.let { sdf.format(it) } ?: "No Date"
-                        Log.i("MainActivity", "Sensor: $sensorName, Value: $sensorValue, Date: $sensorDate")
+                        Log.i(
+                            "MainActivity",
+                            "Sensor: $sensorName, Value: $sensorValue, Date: $sensorDate"
+                        )
                     }
                     // Update your RecyclerView Adapter on the Main thread
                     withContext(Dispatchers.Main) {
@@ -90,7 +113,10 @@ class SensorsFragment : Fragment() {
                 } else {
                     Log.e("MainActivity", "Login failed")
                     Snackbar.make(binding.root, "login failed", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null) // You can remove this if you don't need an action
+                        .setAction(
+                            "Action",
+                            null
+                        ) // You can remove this if you don't need an action
                         .show()
                 }
             } catch (e: Exception) {
@@ -98,10 +124,10 @@ class SensorsFragment : Fragment() {
                 Snackbar.make(binding.root, "Failed to get data: " + e.message, 10000)
                     .setAction("Action", null) // You can remove this if you don't need an action
                     .show()
+            } finally {
+                binding.progressBar.visibility = View.GONE
             }
         }
-
-        return root
     }
 
     override fun onDestroyView() {
